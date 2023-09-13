@@ -1,13 +1,11 @@
 from aiogram import Bot
 from aiogram import executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import Dispatcher, FSMContext
+from aiogram.dispatcher import Dispatcher
 from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import ParseMode
-from aiogram.types.base import InputFile
 from matplotlib import pyplot as plt
-from plotly.figure_factory import np
 from prettytable import prettytable
 
 from update import load

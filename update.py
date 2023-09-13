@@ -1,19 +1,16 @@
-from urllib.error import URLError
-
-import pandas as pd
-import numpy as np
+import datetime
 import json
-
+import warnings
 from concurrent.futures import ThreadPoolExecutor
+from urllib.error import URLError
 from urllib.request import urlopen
 
+import numpy as np
+import pandas as pd
 from darts import TimeSeries
 from darts.dataprocessing.transformers import Scaler
 from darts.models import TiDEModel
-from tqdm.notebook import tqdm
-import datetime
 from stockstats import wrap
-import warnings
 
 warnings.filterwarnings("ignore")
 
