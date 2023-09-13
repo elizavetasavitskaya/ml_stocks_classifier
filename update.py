@@ -63,7 +63,7 @@ def create_indicators_matrix(exchange, indicators, number_of_treads):
 
     matrix_of_indicators = list()
     stocks = pd.DataFrame(get_json_parsed_data(traded_stocks__url))
-    stocks = stocks[(stocks.exchangeShortName == exchange) & (stocks.type == 'stock')].symbol.tolist()[:1000]
+    stocks = stocks[(stocks.exchangeShortName == exchange) & (stocks.type == 'stock')].symbol.tolist()
     print(f'Number of stocks at {exchange}:', len(stocks))
     print('Loading Data ...')
     with ThreadPoolExecutor(max_workers=number_of_treads) as executor:
@@ -82,10 +82,10 @@ def create_indicators_matrix(exchange, indicators, number_of_treads):
 
 def load():
     nasdaq = create_indicators_matrix('NASDAQ', INDICATORS, 10)
-    # nyse = create_indicators_matrix('NYSE', INDICATORS, 10)
-    # lse = create_indicators_matrix('LSE', INDICATORS, 10)
+    nyse = create_indicators_matrix('NYSE', INDICATORS, 10)
+    lse = create_indicators_matrix('LSE', INDICATORS, 10)
 
-    matrix = [*nasdaq]  # , *nyse, *lse]
+    matrix = [*nasdaq, *nyse, *lse]
     labelled_matrix = pd.DataFrame()
     labelled_matrix['stock'] = [stock[0] for stock in matrix]
     labelled_matrix['exchange'] = [stock[1] for stock in matrix]
