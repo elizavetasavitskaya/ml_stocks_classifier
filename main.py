@@ -1,7 +1,7 @@
 from aiogram import Bot
 from aiogram import executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import Dispatcher
+from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import ParseMode
@@ -117,7 +117,7 @@ async def return_to_start(message: types.Message):
                                     message.text == "Stochastic RSI" or message.text == "MACD" or message.text == "SMA"
                                     or message.text == "Williams" or message.text == "Awesome Oscillator"
                                     or message.text == "ADX")
-async def without_puree(message: types.Message):
+async def add_indicators(message: types.Message):
     indicators.add(message.text)
 
 
@@ -132,7 +132,7 @@ async def start_message(message: types.Message):
 
 
 @dp.message_handler(state=Start.start_name)
-async def get_selected_stock_info(message: types.Message):
+async def get_selected_stock_info(message: types.Message, state: FSMContext):
     res = filter_matrix[filter_matrix.stock == message.text]
     if len(res) > 0:
         plt.rcParams["figure.figsize"] = (10, 4)
@@ -143,6 +143,7 @@ async def get_selected_stock_info(message: types.Message):
         # plt.plot([i + 50 for i in range(5)], y)
         # plt.savefig(f'img_{message.from_user.id}.png', dpi=100)
         keyboard = types.ReplyKeyboardMarkup(keyboard=stock_buttons)
+        await state.finish()
         await message.answer(send_stocks_details(res), parse_mode=ParseMode.HTML)
         await message.answer('Prise movements for next 5 days: ' + str(y) +
                              "\n 🟥 - price goes down 🟩 - price rises ⬜️ - price doesn't change",
