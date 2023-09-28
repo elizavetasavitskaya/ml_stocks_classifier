@@ -138,10 +138,6 @@ async def get_selected_stock_info(message: types.Message, state: FSMContext):
         plt.rcParams["figure.figsize"] = (10, 4)
         plt.style.use('https://github.com/dhaitz/matplotlib-stylesheets/raw/master/pitayasmoothie-dark.mplstyle')
         y = res[['prediction_0', 'prediction_1', 'prediction_2', 'prediction_3', 'prediction_4']].values.tolist()[0]
-        # plt.plot([i for i in range(50)],
-        #              list(np.array(filter_matrix['close_scaled'].values[0].data_array()).flatten()[-50:]))
-        # plt.plot([i + 50 for i in range(5)], y)
-        # plt.savefig(f'img_{message.from_user.id}.png', dpi=100)
         keyboard = types.ReplyKeyboardMarkup(keyboard=stock_buttons)
         await state.finish()
         await message.answer(send_stocks_details(res), parse_mode=ParseMode.HTML)
@@ -149,10 +145,32 @@ async def get_selected_stock_info(message: types.Message, state: FSMContext):
                              "\n 🟥 - price goes down 🟩 - price rises ⬜️ - price doesn't change",
                              parse_mode=ParseMode.HTML, reply_markup=keyboard)
     else:
-        actions.clear()
-        indicators.clear()
-        keyboard = types.ReplyKeyboardMarkup(keyboard=stock_buttons)
-        await message.answer("There is no such stock in selected.", reply_markup=keyboard)
+        if message.text != 'Exit':
+            actions.clear()
+            indicators.clear()
+            await state.finish()
+            keyboard = types.ReplyKeyboardMarkup(keyboard=stock_buttons)
+            await message.answer("There is no such stock in selected.", reply_markup=keyboard)
+        else:
+            await state.finish()
+            actions.clear()
+            indicators.clear()
+            kb = [[types.KeyboardButton(text="📉 Buy"), types.KeyboardButton(text="📈 Sell")]]
+            keyboard = types.ReplyKeyboardMarkup(keyboard=kb)
+            image = ("https://img.freepik.com/premium-vector/robotic-process-automation-abstract-concept-vector"
+                     "-illustration_107173-25840.jpg?w=826")
+            await message.answer_photo(photo=image,
+                                       caption="💵 You can use different technical indicators and their combination to "
+                                               "filter stocks (at least one should be selected, if after selection of "
+                                               "indicators for you strategy you get zero stocks - that means there "
+                                               "are no stocks required for all selected indicators and you need to "
+                                               "change something in you strategy to get more stocks. \n" +
+                                               "💶 We provide forecast of prices movements for 5 days using Long-term "
+                                               "Forecasting with TiDE: Time-series Dense Encoder and 50 days plot "
+                                               "classification based on CNN, to know more about patterns write "
+                                               "/patterns. \n"
+                                               "💎 What do you want to do with the shares ? (press one of two buttons) ",
+                                       reply_markup=keyboard)
 
 
 @dp.message_handler(lambda message: message.text == "Find Stocks")
